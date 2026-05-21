@@ -23,8 +23,9 @@ Communication uses **stdio** (not HTTP). SQL Server credentials and options are 
       "args": ["-y", "@achmadya-dev/mcp-mssql-query"],
       "env": {
         "MSSQL_HOST": "127.0.0.1",
+        "MSSQL_PORT": "1433",
         "MSSQL_USER": "sa",
-        "MSSQL_PASSWORD": "password",
+        "MSSQL_PASSWORD": "Password123!",
         "MSSQL_DATABASE": "mydb"
       }
     }
@@ -52,8 +53,9 @@ Register the MCP server with **`node`** and the **absolute path** to `dist/index
       "args": ["C:/Users/Username/projects/mcp-mssql-query/dist/index.js"],
       "env": {
         "MSSQL_HOST": "127.0.0.1",
+        "MSSQL_PORT": "1433",
         "MSSQL_USER": "sa",
-        "MSSQL_PASSWORD": "password",
+        "MSSQL_PASSWORD": "Password123!",
         "MSSQL_DATABASE": "mydb"
       }
     }
