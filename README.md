@@ -20,7 +20,7 @@ Communication uses **stdio** (not HTTP). SQL Server credentials and options are 
   "mcpServers": {
     "mssql": {
       "command": "npx",
-      "args": ["-y", "mcp-mssql-typescript"],
+      "args": ["-y", "@achmadya-dev/mcp-mssql-typescript"],
       "env": {
         "MSSQL_HOST": "127.0.0.1",
         "MSSQL_USER": "sa",
