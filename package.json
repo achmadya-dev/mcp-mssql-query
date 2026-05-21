@@ -1,11 +1,11 @@
 {
-  "name": "mcp-mssql-ts",
+  "name": "mcp-mssql-typescript",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "mcp-mssql-ts": "./dist/index.js"
+    "mcp-mssql-typescript": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",

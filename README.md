@@ -1,26 +1,26 @@
-# mcp-mssql-ts
+# mcp-mssql-typescript
 
-Server [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) untuk Microsoft SQL Server. Tool `mssql_query` memungkinkan klien MCP (misalnya Cursor) menjalankan **satu** pernyataan T-SQL setiap kali dipanggil.
+[Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server for Microsoft SQL Server. The `mssql_query` tool lets MCP clients (e.g. Cursor) run **one** T-SQL statement per invocation.
 
-**Mode bawaan: hanya baca (read-only).** Perintah seperti `INSERT`, `UPDATE`, `DELETE`, dan DDL tidak akan dijalankan kecuali Anda mengaktifkan variabel lingkungan khusus (lihat bagian di bawah).
+**Default mode: read-only.** Commands such as `INSERT`, `UPDATE`, `DELETE`, and DDL are not executed unless you enable the corresponding environment variables (see below).
 
-## Persyaratan
+## Requirements
 
 - Node.js **≥ 20**
 
-Komunikasi memakai **stdio** (bukan HTTP). Kredensial dan opsi SQL Server diatur lewat variabel lingkungan pada konfigurasi MCP (`env`) atau di sistem.
+Communication uses **stdio** (not HTTP). SQL Server credentials and options are set via environment variables in your MCP configuration (`env`) or on the system.
 
-## Instalasi di Cursor
+## Install in Cursor
 
-1. Buka **Settings → MCP**, atau edit file `mcp.json` untuk akun Cursor Anda.
-2. Tambahkan entri server seperti contoh berikut. Perintah `npx -y` akan mengambil paket dari npm registry lalu menjalankannya (tanpa instal global).
+1. Open **Settings → MCP**, or edit the `mcp.json` file for your Cursor account.
+2. Add a server entry like the example below. The `npx -y` command fetches the package from the npm registry and runs it (no global install required).
 
 ```json
 {
   "mcpServers": {
     "mssql": {
       "command": "npx",
-      "args": ["-y", "mcp-mssql-ts"],
+      "args": ["-y", "mcp-mssql-typescript"],
       "env": {
         "MSSQL_HOST": "127.0.0.1",
         "MSSQL_USER": "sa",
@@ -31,26 +31,26 @@ Komunikasi memakai **stdio** (bukan HTTP). Kredensial dan opsi SQL Server diatur
 }
 ```
 
-Sesuaikan nilai `env` dengan server SQL Server Anda.
+Adjust the `env` values to match your SQL Server instance.
 
-## Manual dari clone repository
+## Manual setup from a cloned repository
 
-Clone repositori, pasang dependensi, lalu build:
+Clone the repository, install dependencies, then build:
 
 ```bash
-git clone <url-repo> mcp-mssql-ts
-cd mcp-mssql-ts
+git clone <repo-url> mcp-mssql-typescript
+cd mcp-mssql-typescript
 pnpm install && pnpm run build
 ```
 
-Setelah itu, daftarkan server MCP dengan **`node`** dan **path absolut** ke file `dist/index.js` di folder proyek Anda:
+Then register the MCP server with **`node`** and the **absolute path** to `dist/index.js` in your project folder:
 
 ```json
 {
   "mcpServers": {
     "mssql": {
       "command": "node",
-      "args": ["C:/Users/Username/proyek/mcp-mssql-ts/dist/index.js"],
+      "args": ["C:/Users/Username/projects/mcp-mssql-typescript/dist/index.js"],
       "env": {
         "MSSQL_HOST": "127.0.0.1",
         "MSSQL_USER": "sa",
@@ -61,46 +61,46 @@ Setelah itu, daftarkan server MCP dengan **`node`** dan **path absolut** ke file
 }
 ```
 
-Ganti path di `args` sesuai lokasi clone. Setelah mengubah sumber TypeScript, jalankan lagi `pnpm run build`.
+Replace the path in `args` with your clone location. After changing TypeScript sources, run `pnpm run build` again.
 
-## Variabel lingkungan
+## Environment variables
 
-### Koneksi
+### Connection
 
-| Variabel | Default | Keterangan |
-|----------|---------|------------|
-| `MSSQL_HOST` | `127.0.0.1` | Host SQL Server |
-| `MSSQL_PORT` | `1433` | Port |
-| `MSSQL_USER` | `sa` | Nama pengguna |
-| `MSSQL_PASSWORD` | *(tidak diset = string kosong)* | Kata sandi |
-| `MSSQL_DATABASE` | *(opsional)* | Database yang dipilih setelah koneksi |
-| `MSSQL_INSTANCE_NAME` | *(opsional)* | Nama instance (mis. `SQLEXPRESS`) |
-| `MSSQL_ENCRYPT` | `true` | Enkripsi koneksi |
-| `MSSQL_TRUST_SERVER_CERTIFICATE` | `true` | Percayai sertifikat server (berguna untuk dev lokal) |
-| `MSSQL_CONNECTION_TIMEOUT_MS` | `15000` | Batas waktu koneksi (ms) |
-| `MSSQL_REQUEST_TIMEOUT_MS` | `15000` | Batas waktu permintaan (ms) |
-| `MSSQL_MAX_ROWS` | `500` | Batas baris hasil `SELECT` yang ditampilkan |
+| Variable                         | Default                  | Description                              |
+| -------------------------------- | ------------------------ | ---------------------------------------- |
+| `MSSQL_HOST`                     | `127.0.0.1`              | SQL Server host                          |
+| `MSSQL_PORT`                     | `1433`                   | Port                                     |
+| `MSSQL_USER`                     | `sa`                     | Username                                 |
+| `MSSQL_PASSWORD`                 | _(unset = empty string)_ | Password                                 |
+| `MSSQL_DATABASE`                 | _(optional)_             | Database selected after connect          |
+| `MSSQL_INSTANCE_NAME`            | _(optional)_             | Instance name (e.g. `SQLEXPRESS`)        |
+| `MSSQL_ENCRYPT`                  | `true`                   | Encrypt connection                       |
+| `MSSQL_TRUST_SERVER_CERTIFICATE` | `true`                   | Trust server certificate (useful for local dev) |
+| `MSSQL_CONNECTION_TIMEOUT_MS`    | `15000`                  | Connection timeout (ms)                  |
+| `MSSQL_REQUEST_TIMEOUT_MS`       | `15000`                  | Request timeout (ms)                     |
+| `MSSQL_MAX_ROWS`                 | `500`                    | Max rows returned for `SELECT` results   |
 
-### Mengizinkan operasi tulis
+### Allowing write operations
 
-Perintah **baca** (`SELECT`, `VALUES`, `PRINT`, dan sejenisnya) selalu diperbolehkan.
+**Read** commands (`SELECT`, `VALUES`, `PRINT`, and similar) are always allowed.
 
-Untuk mengizinkan **tulis** atau **DDL**, aktifkan jenis yang diinginkan dengan variabel berikut. Nilai yang dianggap aktif: `true`, `1`, `yes`, atau `on` (tidak case-sensitive).
+To allow **writes** or **DDL**, enable the desired types with the variables below. Values treated as enabled: `true`, `1`, `yes`, or `on` (case-insensitive).
 
-| Variabel | Mengizinkan |
-|----------|-------------|
-| `ALLOW_INSERT_OPERATION` | `INSERT` |
-| `ALLOW_UPDATE_OPERATION` | `UPDATE` |
-| `ALLOW_DELETE_OPERATION` | `DELETE` |
-| `ALLOW_DDL_OPERATION` | DDL (`CREATE`, `ALTER`, `DROP`, dll.) |
+| Variable                 | Allows                             |
+| ------------------------ | ---------------------------------- |
+| `ALLOW_INSERT_OPERATION` | `INSERT`                           |
+| `ALLOW_UPDATE_OPERATION` | `UPDATE`                           |
+| `ALLOW_DELETE_OPERATION` | `DELETE`                           |
+| `ALLOW_DDL_OPERATION`    | DDL (`CREATE`, `ALTER`, `DROP`, etc.) |
 
-Jika suatu variabel tidak diset, atau nilainya bukan salah satu di atas, jenis operasi itu tetap **ditolak** (tetap read-only untuk jenis tersebut).
+If a variable is unset, or its value is not one of the above, that operation type remains **rejected** (read-only for that type).
 
-## Perilaku lain
+## Other behavior
 
-- Satu permintaan hanya boleh berisi **satu** pernyataan T-SQL (tidak boleh beberapa perintah dipisah `;`).
-- Hasil `SELECT` dikembalikan dalam format **JSON**; jumlah baris dibatasi oleh `MSSQL_MAX_ROWS`.
-- Konstruk berikut **selalu ditolak**, terlepas dari pengaturan `ALLOW_*`:
+- Each request must contain **one** T-SQL statement only (no multiple statements separated by `;`).
+- `SELECT` results are returned as **JSON**; row count is capped by `MSSQL_MAX_ROWS`.
+- The following constructs are **always rejected**, regardless of `ALLOW_*` settings:
   - Common Table Expression (`WITH ...`)
   - `ROW_NUMBER()`
   - `EXEC` / `EXECUTE`

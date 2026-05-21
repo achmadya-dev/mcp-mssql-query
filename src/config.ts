@@ -25,7 +25,6 @@ function envOptionalStr(name: string): string | undefined {
 
 let cached: MssqlConfig | null = null;
 
-/** Env ALLOW_* untuk tulis/DDL default `false` — hanya read (SELECT, …) kecuali diaktifkan eksplisit. */
 export function loadConfig(): MssqlConfig {
   if (cached) return cached;
   cached = {

@@ -14,12 +14,12 @@ import { errorResponse, jsonResponse } from "../../utils/response.js";
 const TOOL_NAME = "mssql_query";
 const TOOL_TITLE = "MSSQL query";
 const TOOL_DESCRIPTION =
-  "Menjalankan satu pernyataan T-SQL pada Microsoft SQL Server (default: read-only). Koneksi dari env MSSQL_*; SELECT/VALUES/PRINT baca diizinkan; INSERT/UPDATE/DELETE/DDL ditolak kecuali env ALLOW_* terkait diset. CTE (WITH ...), ROW_NUMBER(), MERGE, dan EXEC/EXECUTE selalu ditolak. Hasil dikembalikan dalam format JSON.";
+  "Run a single T-SQL statement on Microsoft SQL Server (default: read-only). Connection from MSSQL_* env vars; SELECT/VALUES/PRINT are allowed; INSERT/UPDATE/DELETE/DDL are rejected unless the matching ALLOW_* env is set. CTE (WITH ...), ROW_NUMBER(), MERGE, and EXEC/EXECUTE are always rejected. Results are returned as JSON.";
 
 const inputSchema = {
   sql: z
     .string()
-    .describe("Satu pernyataan T-SQL (tanpa CTE / ROW_NUMBER / EXEC / MERGE)"),
+    .describe("One T-SQL statement (no CTE / ROW_NUMBER / EXEC / MERGE)"),
 };
 
 async function handleQuery(config: MssqlConfig, sql: string) {
@@ -30,7 +30,7 @@ async function handleQuery(config: MssqlConfig, sql: string) {
   if (!banned.ok) return errorResponse(banned.reason);
 
   const keyword = firstKeyword(sql);
-  if (!keyword) return errorResponse("Tidak dapat menemukan perintah SQL.");
+  if (!keyword) return errorResponse("Could not detect SQL command.");
 
   const permission = checkAllowed(keyword, {
     allowInsert: config.allowInsert,
