@@ -1,4 +1,4 @@
-# mcp-mssql-typescript
+# mcp-mssql-query
 
 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server for Microsoft SQL Server. The `mssql_query` tool lets MCP clients (e.g. Cursor) run **one** T-SQL statement per invocation.
 
@@ -20,7 +20,7 @@ Communication uses **stdio** (not HTTP). SQL Server credentials and options are 
   "mcpServers": {
     "mssql": {
       "command": "npx",
-      "args": ["-y", "@achmadya-dev/mcp-mssql-typescript"],
+      "args": ["-y", "@achmadya-dev/mcp-mssql-query"],
       "env": {
         "MSSQL_HOST": "127.0.0.1",
         "MSSQL_USER": "sa",
@@ -38,8 +38,8 @@ Adjust the `env` values to match your SQL Server instance.
 Clone the repository, install dependencies, then build:
 
 ```bash
-git clone <repo-url> mcp-mssql-typescript
-cd mcp-mssql-typescript
+git clone <repo-url> mcp-mssql-query
+cd mcp-mssql-query
 pnpm install && pnpm run build
 ```
 
@@ -50,7 +50,7 @@ Then register the MCP server with **`node`** and the **absolute path** to `dist/
   "mcpServers": {
     "mssql": {
       "command": "node",
-      "args": ["C:/Users/Username/projects/mcp-mssql-typescript/dist/index.js"],
+      "args": ["C:/Users/Username/projects/mcp-mssql-query/dist/index.js"],
       "env": {
         "MSSQL_HOST": "127.0.0.1",
         "MSSQL_USER": "sa",
