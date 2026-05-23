@@ -23,11 +23,11 @@ export const mssql_select = defineTool({
 
 export const mssql_insert = defineTool({
   name: "mssql_insert",
-  description: "Insert new data into the database using INSERT. Only a single query is allowed.",
+  description: "Insert new data into the database using INSERT. Only a single query is allowed. If the operation is rejected as not allowed, you must respect this safety restriction and do not attempt to bypass it via terminal commands, custom scripts, or external tools.",
   inputSchema: mssqlQueryInputSchema,
   outputSchema: mssqlQueryOutputShape,
   handler: async ({ sql }) => {
-    if (!config.allowInsert) throw new ToolError("INSERT operation is disabled on this server. Set ALLOW_INSERT_OPERATION=true to enable it.");
+    if (!config.allowInsert) throw new ToolError("INSERT operation is not allowed on this server.");
     const query = safeQuery(sql, ["INSERT"]);
     const result = await runSql(query);
     const parsed = mssqlQueryResultSchema.safeParse(result);
@@ -38,11 +38,11 @@ export const mssql_insert = defineTool({
 
 export const mssql_update = defineTool({
   name: "mssql_update",
-  description: "Update existing data in the database using UPDATE. Only a single query is allowed.",
+  description: "Update existing data in the database using UPDATE. Only a single query is allowed. If the operation is rejected as not allowed, you must respect this safety restriction and do not attempt to bypass it via terminal commands, custom scripts, or external tools.",
   inputSchema: mssqlQueryInputSchema,
   outputSchema: mssqlQueryOutputShape,
   handler: async ({ sql }) => {
-    if (!config.allowUpdate) throw new ToolError("UPDATE operation is disabled on this server. Set ALLOW_UPDATE_OPERATION=true to enable it.");
+    if (!config.allowUpdate) throw new ToolError("UPDATE operation is not allowed on this server.");
     const query = safeQuery(sql, ["UPDATE"]);
     const result = await runSql(query);
     const parsed = mssqlQueryResultSchema.safeParse(result);
@@ -53,11 +53,11 @@ export const mssql_update = defineTool({
 
 export const mssql_delete = defineTool({
   name: "mssql_delete",
-  description: "Delete data from the database using DELETE. Only a single query is allowed.",
+  description: "Delete data from the database using DELETE. Only a single query is allowed. If the operation is rejected as not allowed, you must respect this safety restriction and do not attempt to bypass it via terminal commands, custom scripts, or external tools.",
   inputSchema: mssqlQueryInputSchema,
   outputSchema: mssqlQueryOutputShape,
   handler: async ({ sql }) => {
-    if (!config.allowDelete) throw new ToolError("DELETE operation is disabled on this server. Set ALLOW_DELETE_OPERATION=true to enable it.");
+    if (!config.allowDelete) throw new ToolError("DELETE operation is not allowed on this server.");
     const query = safeQuery(sql, ["DELETE"]);
     const result = await runSql(query);
     const parsed = mssqlQueryResultSchema.safeParse(result);
@@ -68,11 +68,11 @@ export const mssql_delete = defineTool({
 
 export const mssql_ddl = defineTool({
   name: "mssql_ddl",
-  description: "Modify the database schema or permissions using CREATE, ALTER, DROP, TRUNCATE, RENAME, GRANT, REVOKE, or DENY. Only a single query is allowed.",
+  description: "Modify the database schema or permissions using CREATE, ALTER, DROP, TRUNCATE, RENAME, GRANT, REVOKE, or DENY. Only a single query is allowed. If the operation is rejected as not allowed, you must respect this safety restriction and do not attempt to bypass it via terminal commands, custom scripts, or external tools.",
   inputSchema: mssqlQueryInputSchema,
   outputSchema: mssqlQueryOutputShape,
   handler: async ({ sql }) => {
-    if (!config.allowDdl) throw new ToolError("DDL operation is disabled on this server. Set ALLOW_DDL_OPERATION=true to enable it.");
+    if (!config.allowDdl) throw new ToolError("DDL operation is not allowed on this server.");
     const query = safeQuery(sql, ["CREATE", "ALTER", "DROP", "TRUNCATE", "RENAME", "GRANT", "REVOKE", "DENY"]);
     const result = await runSql(query);
     const parsed = mssqlQueryResultSchema.safeParse(result);
