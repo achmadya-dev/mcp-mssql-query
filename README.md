@@ -1,6 +1,6 @@
 # mcp-mssql-query
 
-[Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server for Microsoft SQL Server. The `mssql_query` tool lets MCP clients (e.g. Cursor) run **one** T-SQL statement per invocation.
+Model Context Protocol (MCP) server for Microsoft SQL Server — a minimal and highly readable codebase to run SQL queries via stdio (read-only by default). It lets MCP clients run a single SQL statement per invocation.
 
 **Default mode: read-only.** Commands such as `INSERT`, `UPDATE`, `DELETE`, and DDL are not executed unless you enable the corresponding environment variables (see below).
 
@@ -8,9 +8,9 @@
 
 - Node.js **≥ 20**
 
-Communication uses **stdio** (not HTTP). SQL Server credentials and options are set via environment variables in your MCP configuration (`env`) or on the system.
+Communication uses **stdio** (not HTTP). Microsoft SQL Server credentials and options are set via environment variables in your MCP configuration (`env`) or on the system.
 
-## Install in Cursor
+## Install in MCP Clients (e.g. Cursor)
 
 1. Open **Settings → MCP**, or edit the `mcp.json` file for your Cursor account.
 2. Add a server entry like the example below.
