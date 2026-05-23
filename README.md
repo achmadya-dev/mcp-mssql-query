@@ -96,6 +96,7 @@ To allow **writes** or **DDL**, enable the variables below. Values treated as en
 | `ALLOW_DELETE_OPERATION` | `DELETE`                              |
 | `ALLOW_DDL_OPERATION`    | DDL (`CREATE`, `ALTER`, `DROP`, etc.) |
 
+<<<<<<< Updated upstream
 If a variable is unset or its value is not one of the above, that operation type is **rejected**.
 
 ## Query restrictions
@@ -106,6 +107,11 @@ Regardless of `ALLOW_*` settings, the following are **always rejected**:
 - **`ROW_NUMBER()`** — window function not allowed (use JOIN/aggregation instead).
 - **`EXEC` / `EXECUTE`** — stored procedure or dynamic SQL execution.
 - **`MERGE INTO`** — use explicit `INSERT` / `UPDATE` / `DELETE` instead.
+||||||| Stash base
+If a variable is unset, or its value is not one of the above, that operation type remains **rejected** (read-only for that type).
+=======
+If a variable is unset or its value is not one of the above, that operation type is **rejected**.
+>>>>>>> Stashed changes
 
 ## Other behavior
 
