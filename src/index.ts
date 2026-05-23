@@ -8,7 +8,6 @@ import {
   mssql_delete,
   mssql_ddl,
 } from "./mcp/registry.js";
-import config from "./mcp/mssql/config.js";
 
 async function main(): Promise<void> {
   const server = new Server({
@@ -17,10 +16,10 @@ async function main(): Promise<void> {
   });
 
   server.registerTool(mssql_select);
-  if (config.allowInsert) server.registerTool(mssql_insert);
-  if (config.allowUpdate) server.registerTool(mssql_update);
-  if (config.allowDelete) server.registerTool(mssql_delete);
-  if (config.allowDdl) server.registerTool(mssql_ddl);
+  server.registerTool(mssql_insert);
+  server.registerTool(mssql_update);
+  server.registerTool(mssql_delete);
+  server.registerTool(mssql_ddl);
 
   await server.start();
 }

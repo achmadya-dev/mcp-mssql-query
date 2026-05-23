@@ -1,6 +1,6 @@
 # mcp-mssql-query
 
-Model Context Protocol (MCP) server for Microsoft SQL Server — a minimal and highly readable codebase to run SQL queries via stdio (read-only by default). It lets MCP clients run a single SQL statement per invocation.
+Model Context Protocol (MCP) server for Microsoft SQL Server to run SQL queries via stdio (read-only by default). It lets MCP clients run a single SQL statement per invocation.
 
 **Default mode: read-only.** Commands such as `INSERT`, `UPDATE`, `DELETE`, and DDL are not executed unless you enable the corresponding environment variables (see below).
 

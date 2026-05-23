@@ -1,7 +1,7 @@
 {
   "name": "@achmadya-dev/mcp-mssql-query",
   "version": "0.1.0",
-  "description": "Microsoft SQL Server database tool for Model Context Protocol (MCP) clients",
+  "description": "Model Context Protocol (MCP) server for Microsoft SQL Server to run SQL queries via stdio (read-only by default)",
   "type": "module",
   "author": "achmadya",
   "license": "MIT",
@@ -28,7 +28,8 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "start": "node dist/index.js",
     "prepublishOnly": "pnpm run build"
   },
@@ -36,13 +37,17 @@
     "node": ">=20"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "1.12.0",
+    "@modelcontextprotocol/sdk": "1.29.0",
     "mssql": "12.5.4",
     "zod": "4.3.6"
   },
   "devDependencies": {
+    "@jest/globals": "30.4.1",
+    "@types/jest": "30.0.0",
     "@types/mssql": "12.3.0",
     "@types/node": "22.10.0",
+    "jest": "30.4.2",
+    "ts-jest": "29.4.11",
     "typescript": "5.7.2"
   }
 }
