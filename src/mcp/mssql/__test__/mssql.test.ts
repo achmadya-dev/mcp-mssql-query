@@ -79,7 +79,7 @@ describe("runSql", () => {
       default: {
         host: "127.0.0.1",
         port: 1433,
-        user: "sa",
+        user: "",
         password: "",
         database: undefined,
         connectionTimeoutMs: 15000,

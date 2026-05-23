@@ -21,7 +21,7 @@ function envStr(name: string, defaultVal = ""): string {
 export default {
   host: envStr("MSSQL_HOST", "127.0.0.1"),
   port: envInt("MSSQL_PORT", 1433),
-  user: envStr("MSSQL_USER", "sa"),
+  user: envStr("MSSQL_USER"),
   password: envStr("MSSQL_PASSWORD", ""),
   database: envStr("MSSQL_DATABASE") || undefined,
   instanceName: envStr("MSSQL_INSTANCE_NAME") || undefined,

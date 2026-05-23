@@ -73,7 +73,7 @@ Replace the path in `args` with your clone location. After changing TypeScript s
 | -------------------------------- | ------------------------ | --------------------------------------------- |
 | `MSSQL_HOST`                     | `127.0.0.1`              | SQL Server host                               |
 | `MSSQL_PORT`                     | `1433`                   | Port                                          |
-| `MSSQL_USER`                     | `sa`                     | Username                                      |
+| `MSSQL_USER`                     | _(unset = empty string)_ | Username                                      |
 | `MSSQL_PASSWORD`                 | _(unset = empty string)_ | Password                                      |
 | `MSSQL_DATABASE`                 | _(optional)_             | Database name                                 |
 | `MSSQL_INSTANCE_NAME`            | _(optional)_             | Instance name (e.g. `SQLEXPRESS`)             |
