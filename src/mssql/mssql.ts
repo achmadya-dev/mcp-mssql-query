@@ -1,6 +1,6 @@
 import mssql from "mssql";
 import type { config as MssqlClientConfig } from "mssql";
-import { ToolError } from "../server.js";
+import { ToolError } from "@achmadya-dev/mcp-core";
 import config from "./config.js";
 import * as helpers from "./helpers.js";
 
@@ -11,19 +11,21 @@ export function safeQuery(sql: string, allowedPrefixes: string[]): string {
   return statement;
 }
 
-export async function runSql(sql: string): Promise<{
-  kind: "resultset";
-  columns: string[];
-  rowCount: number;
-  totalRows: number;
-  truncated: boolean;
-  maxRows: number;
-  rows: Record<string, any>[];
-}
-| {
-  kind: "execute";
-  affectedRows: number;
-}> {
+export async function runSql(sql: string): Promise<
+  | {
+      kind: "resultset";
+      columns: string[];
+      rowCount: number;
+      totalRows: number;
+      truncated: boolean;
+      maxRows: number;
+      rows: Record<string, any>[];
+    }
+  | {
+      kind: "execute";
+      affectedRows: number;
+    }
+> {
   const clientConfig: MssqlClientConfig = {
     server: config.host,
     port: config.port,
@@ -66,19 +68,14 @@ export async function runSql(sql: string): Promise<{
       };
     }
 
-    const affected = (result.rowsAffected ?? []).reduce(
-      (acc, n) => acc + (n ?? 0),
-      0
-    );
+    const affected = (result.rowsAffected ?? []).reduce((acc, n) => acc + (n ?? 0), 0);
 
     return {
       kind: "execute",
       affectedRows: affected,
     };
   } catch (e) {
-    throw new ToolError(
-      `MSSQL: ${e instanceof Error ? e.message : String(e)}`
-    );
+    throw new ToolError(`MSSQL: ${e instanceof Error ? e.message : String(e)}`);
   } finally {
     await pool.close();
   }

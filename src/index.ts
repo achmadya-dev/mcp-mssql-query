@@ -1,30 +1,14 @@
 #!/usr/bin/env node
-import { Server } from "./mcp/server.js";
+import { startMcpServer } from "@achmadya-dev/mcp-core";
 import packageJson from "../package.json" with { type: "json" };
-import {
-  mssql_select,
-  mssql_insert,
-  mssql_update,
-  mssql_delete,
-  mssql_ddl,
-} from "./mcp/registry.js";
+import { mssql_ddl } from "./tools/mssql_ddl.js";
+import { mssql_delete } from "./tools/mssql_delete.js";
+import { mssql_insert } from "./tools/mssql_insert.js";
+import { mssql_select } from "./tools/mssql_select.js";
+import { mssql_update } from "./tools/mssql_update.js";
 
-async function main(): Promise<void> {
-  const server = new Server({
-    name: "MSSQL Database",
-    version: packageJson.version,
-  });
-
-  server.registerTool(mssql_select);
-  server.registerTool(mssql_insert);
-  server.registerTool(mssql_update);
-  server.registerTool(mssql_delete);
-  server.registerTool(mssql_ddl);
-
-  await server.start();
-}
-
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
+await startMcpServer({
+  name: "Microsoft SQL Server",
+  version: packageJson.version,
+  tools: [mssql_select, mssql_insert, mssql_update, mssql_delete, mssql_ddl],
 });

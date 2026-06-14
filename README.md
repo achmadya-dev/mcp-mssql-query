@@ -1,19 +1,13 @@
-# mcp-mssql-query
+# @achmadya-dev/mcp-mssql-query
 
-Model Context Protocol (MCP) server for Microsoft SQL Server to run SQL queries via stdio (read-only by default). It lets MCP clients run a single SQL statement per invocation.
-
-**Default mode: read-only.** Commands such as `INSERT`, `UPDATE`, `DELETE`, and DDL are not executed unless you enable the corresponding environment variables (see below).
+MCP server for Microsoft SQL Server. Runs a single T-SQL statement per tool call over **stdio**. **Read-only by default** — writes and DDL require explicit env flags.
 
 ## Requirements
 
 - Node.js **≥ 20**
+- A reachable SQL Server instance
 
-Communication uses **stdio** (not HTTP). Microsoft SQL Server credentials and options are set via environment variables in your MCP configuration (`env`) or on the system.
-
-## Install in MCP Clients (e.g. Cursor)
-
-1. Open **Settings → MCP**, or edit the `mcp.json` file for your Cursor account.
-2. Add a server entry like the example below.
+## Install from npm
 
 ```json
 {
@@ -22,85 +16,104 @@ Communication uses **stdio** (not HTTP). Microsoft SQL Server credentials and op
       "command": "npx",
       "args": ["-y", "@achmadya-dev/mcp-mssql-query"],
       "env": {
-        "MSSQL_HOST": "127.0.0.1",
+        "MSSQL_HOST": "localhost",
         "MSSQL_PORT": "1433",
         "MSSQL_USER": "sa",
-        "MSSQL_PASSWORD": "Password123!",
-        "MSSQL_DATABASE": "mydb"
+        "MSSQL_PASSWORD": "your_password",
+        "MSSQL_DATABASE": "your_database",
+        "MSSQL_TRUST_SERVER_CERTIFICATE": "true"
       }
     }
   }
 }
 ```
 
-Adjust the `env` values to match your SQL Server instance.
+Or use `envFile` instead of inline `env`.
 
-## Manual setup from a cloned repository
+## Develop from source
 
 ```bash
-git clone <repo-url> mcp-mssql-query
-cd mcp-mssql-query
-pnpm install && pnpm run build
+cp .env.example .env
+pnpm install
+docker compose up -d mssql
+pnpm --filter @achmadya-dev/mcp-mssql-query run build
 ```
 
-Register the MCP server with **`node`** and the **absolute path** to `dist/index.js`:
+`.cursor/mcp.json`:
 
 ```json
 {
   "mcpServers": {
     "mssql": {
       "command": "node",
-      "args": ["C:/Users/Username/projects/mcp-mssql-query/dist/index.js"],
-      "env": {
-        "MSSQL_HOST": "127.0.0.1",
-        "MSSQL_PORT": "1433",
-        "MSSQL_USER": "sa",
-        "MSSQL_PASSWORD": "Password123!",
-        "MSSQL_DATABASE": "mydb"
-      }
+      "args": ["${workspaceFolder}/packages/mcp-mssql-query/dist/index.js"],
+      "envFile": "${workspaceFolder}/.env"
     }
   }
 }
 ```
 
-Replace the path in `args` with your clone location. After changing TypeScript sources, run `pnpm run build` again.
+Relevant `.env` keys:
+
+```env
+MSSQL_HOST=localhost
+MSSQL_PORT=1433
+MSSQL_USER=sa
+MSSQL_PASSWORD=DevPassword123!
+MSSQL_TRUST_SERVER_CERTIFICATE=true
+```
 
 ## Environment variables
 
 ### Connection
 
-| Variable                         | Default                  | Description                                   |
-| -------------------------------- | ------------------------ | --------------------------------------------- |
-| `MSSQL_HOST`                     | `127.0.0.1`              | SQL Server host                               |
-| `MSSQL_PORT`                     | `1433`                   | Port                                          |
-| `MSSQL_USER`                     | _(unset = empty string)_ | Username                                      |
-| `MSSQL_PASSWORD`                 | _(unset = empty string)_ | Password                                      |
-| `MSSQL_DATABASE`                 | _(optional)_             | Database name                                 |
-| `MSSQL_INSTANCE_NAME`            | _(optional)_             | Instance name (e.g. `SQLEXPRESS`)             |
-| `MSSQL_ENCRYPT`                  | `true`                   | Encrypt connection                            |
-| `MSSQL_TRUST_SERVER_CERTIFICATE` | `true`                   | Trust server certificate (useful for local dev) |
-| `MSSQL_CONNECTION_TIMEOUT_MS`    | `15000`                  | Connection timeout (ms)                       |
-| `MSSQL_REQUEST_TIMEOUT_MS`       | `15000`                  | Request timeout (ms)                          |
-| `MSSQL_MAX_ROWS`                 | `500`                    | Max rows returned for row-returning queries     |
+| Variable                         | Default      | Description                          |
+| -------------------------------- | ------------ | ------------------------------------ |
+| `MSSQL_HOST`                     | `localhost`  | SQL Server host                      |
+| `MSSQL_PORT`                     | `1433`       | Port                                 |
+| `MSSQL_USER`                     | _(empty)_    | Username                             |
+| `MSSQL_PASSWORD`                 | _(empty)_    | Password                             |
+| `MSSQL_DATABASE`                 | _(optional)_ | Database name                        |
+| `MSSQL_INSTANCE_NAME`            | _(optional)_ | Instance name (e.g. `SQLEXPRESS`)    |
+| `MSSQL_ENCRYPT`                  | `true`       | Encrypt connection                   |
+| `MSSQL_TRUST_SERVER_CERTIFICATE` | `true`       | Trust server certificate (local dev) |
+| `MSSQL_CONNECTION_TIMEOUT_MS`    | `15000`      | Connection timeout (ms)              |
+| `MSSQL_REQUEST_TIMEOUT_MS`       | `15000`      | Request timeout (ms)                 |
+| `MSSQL_MAX_ROWS`                 | `500`        | Max rows for row-returning queries   |
 
-### Allowing write operations
+### Write access
 
-**Read** commands (`SELECT`, `VALUES`, `PRINT`) are always allowed.
+| Variable                 | Allows   |
+| ------------------------ | -------- |
+| `ALLOW_INSERT_OPERATION` | `INSERT` |
+| `ALLOW_UPDATE_OPERATION` | `UPDATE` |
+| `ALLOW_DELETE_OPERATION` | `DELETE` |
+| `ALLOW_DDL_OPERATION`    | DDL      |
 
-To allow **writes** or **DDL**, enable the variables below. Values treated as enabled: `true`, `1`, `yes`, or `on` (case-insensitive).
+Enabled values: `true`, `1`, `yes`, `on`.
 
-| Variable                 | Allows                                |
-| ------------------------ | ------------------------------------- |
-| `ALLOW_INSERT_OPERATION` | `INSERT`                              |
-| `ALLOW_UPDATE_OPERATION` | `UPDATE`                              |
-| `ALLOW_DELETE_OPERATION` | `DELETE`                              |
-| `ALLOW_DDL_OPERATION`    | DDL (`CREATE`, `ALTER`, `DROP`, etc.) |
+## Tools
 
-If a variable is unset or its value is not one of the above, that operation type is **rejected**.
+| Tool           | Statements                  | Env flag                 |
+| -------------- | --------------------------- | ------------------------ |
+| `mssql_select` | `SELECT`, `VALUES`, `PRINT` | always on                |
+| `mssql_insert` | `INSERT`                    | `ALLOW_INSERT_OPERATION` |
+| `mssql_update` | `UPDATE`                    | `ALLOW_UPDATE_OPERATION` |
+| `mssql_delete` | `DELETE`                    | `ALLOW_DELETE_OPERATION` |
+| `mssql_ddl`    | DDL                         | `ALLOW_DDL_OPERATION`    |
 
-## Other behavior
+Each tool accepts one `sql` string.
 
-- Each request must contain **one** T-SQL statement only (no multiple statements separated by `;`).
-- Results are returned as **JSON** text in the tool response.
-- Row-returning queries include `columns`, `rows`, `rowCount`, `totalRows`, `truncated`, and `maxRows`; row count is capped by `MSSQL_MAX_ROWS`.
-- Non-row commands (e.g. `INSERT`, `UPDATE`) return `kind: "execute"` with `affectedRows`.
+## Behavior and security
+
+- One T-SQL statement per request.
+- Results are JSON text; row-returning queries include truncation metadata.
+- Non-row commands return `kind: "execute"` with `affectedRows`.
+
+## Package scripts
+
+```bash
+pnpm run build
+pnpm test
+pnpm start
+```

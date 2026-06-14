@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const mssqlQueryInputSchema = {
+export const mssqlQueryInputSchema = z.object({
   sql: z
     .string()
     .refine((val) => val.trim().length > 0, {
@@ -9,12 +9,10 @@ export const mssqlQueryInputSchema = {
     .refine((val) => val.length <= 100000, {
       message: "SQL is too long (max 100,000 characters)",
     })
-    .describe(
-      "A single SQL statement. Multiple statements separated by ';' are not allowed."
-    ),
-} as const;
+    .describe("A single SQL statement. Multiple statements separated by ';' are not allowed."),
+});
 
-export const mssqlQueryOutputShape = {
+export const mssqlQueryOutputShape = z.object({
   kind: z.enum(["resultset", "execute"]),
   columns: z.array(z.string()).optional(),
   rowCount: z.number().int().nonnegative().optional(),
@@ -23,7 +21,7 @@ export const mssqlQueryOutputShape = {
   maxRows: z.number().int().positive().optional(),
   rows: z.array(z.record(z.string(), z.any())).optional(),
   affectedRows: z.number().int().nonnegative().optional(),
-} as const;
+});
 
 export const mssqlQueryResultSchema = z.discriminatedUnion("kind", [
   z.object({
@@ -40,3 +38,5 @@ export const mssqlQueryResultSchema = z.discriminatedUnion("kind", [
     affectedRows: z.number().int().nonnegative(),
   }),
 ]);
+
+export type MssqlQueryResult = z.infer<typeof mssqlQueryResultSchema>;
