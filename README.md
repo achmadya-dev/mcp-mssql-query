@@ -33,34 +33,32 @@ Or use `envFile` instead of inline `env`.
 ## Develop from source
 
 ```bash
-cp .env.example .env
+git clone https://github.com/achmadya-dev/mcp-mssql-query.git
+cd mcp-mssql-query
 pnpm install
-docker compose up -d mssql
-pnpm --filter @achmadya-dev/mcp-mssql-query run build
+pnpm run build
+pnpm test
 ```
 
-`.cursor/mcp.json`:
+Open the repo root in Cursor. You need a reachable SQL Server instance — set connection env in `.cursor/mcp.json` or via `envFile`:
 
 ```json
 {
   "mcpServers": {
     "mssql": {
       "command": "node",
-      "args": ["${workspaceFolder}/packages/mcp-mssql-query/dist/index.js"],
-      "envFile": "${workspaceFolder}/.env"
+      "args": ["${workspaceFolder}/dist/index.js"],
+      "env": {
+        "MSSQL_HOST": "localhost",
+        "MSSQL_PORT": "1433",
+        "MSSQL_USER": "sa",
+        "MSSQL_PASSWORD": "your_password",
+        "MSSQL_DATABASE": "your_database",
+        "MSSQL_TRUST_SERVER_CERTIFICATE": "true"
+      }
     }
   }
 }
-```
-
-Relevant `.env` keys:
-
-```env
-MSSQL_HOST=localhost
-MSSQL_PORT=1433
-MSSQL_USER=sa
-MSSQL_PASSWORD=DevPassword123!
-MSSQL_TRUST_SERVER_CERTIFICATE=true
 ```
 
 ## Environment variables
