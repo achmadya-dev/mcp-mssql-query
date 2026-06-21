@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { runMcp } from "@achmadya-dev/mcp-core";
 import packageJson from "../package.json" with { type: "json" };
+import { checkConnection } from "./mssql/mssql.js";
 import { mssql_ddl } from "./tools/mssql_ddl.js";
 import { mssql_delete } from "./tools/mssql_delete.js";
 import { mssql_insert } from "./tools/mssql_insert.js";
@@ -12,4 +13,5 @@ await runMcp({
   version: packageJson.version,
   transport: "stdio",
   tools: [mssql_select, mssql_insert, mssql_update, mssql_delete, mssql_ddl],
+  healthCheck: checkConnection,
 });

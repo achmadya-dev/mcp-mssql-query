@@ -11,6 +11,37 @@ export function safeQuery(sql: string, allowedPrefixes: string[]): string {
   return statement;
 }
 
+function connectionConfig(): MssqlClientConfig {
+  return {
+    server: config.host,
+    port: config.port,
+    user: config.user,
+    password: config.password,
+    database: config.database,
+    connectionTimeout: config.connectionTimeoutMs,
+    requestTimeout: config.requestTimeoutMs,
+    options: {
+      encrypt: config.encrypt,
+      trustServerCertificate: config.trustServerCertificate,
+      instanceName: config.instanceName,
+    },
+    pool: { min: 0, max: 1 },
+  };
+}
+
+export async function checkConnection(): Promise<void> {
+  const pool = new mssql.ConnectionPool(connectionConfig());
+
+  try {
+    await pool.connect();
+    await pool.request().query("SELECT 1");
+  } catch (e) {
+    throw new Error(`MSSQL: ${e instanceof Error ? e.message : String(e)}`);
+  } finally {
+    await pool.close();
+  }
+}
+
 export async function runSql(sql: string): Promise<
   | {
       kind: "resultset";
@@ -26,21 +57,7 @@ export async function runSql(sql: string): Promise<
       affectedRows: number;
     }
 > {
-  const clientConfig: MssqlClientConfig = {
-    server: config.host,
-    port: config.port,
-    user: config.user,
-    password: config.password,
-    database: config.database,
-    connectionTimeout: config.connectionTimeoutMs,
-    requestTimeout: config.requestTimeoutMs,
-    options: {
-      encrypt: config.encrypt,
-      trustServerCertificate: config.trustServerCertificate,
-      instanceName: config.instanceName,
-    },
-    pool: { min: 0, max: 1 },
-  };
+  const clientConfig: MssqlClientConfig = connectionConfig();
 
   const pool = new mssql.ConnectionPool(clientConfig);
 
