@@ -2,6 +2,7 @@ import mssql from "mssql";
 import type { config as MssqlClientConfig } from "mssql";
 import { ToolError } from "@achmadya-dev/mcp-core";
 import config from "./config.js";
+import { formatConnectionError } from "../connection-status.js";
 import * as helpers from "./helpers.js";
 
 export function safeQuery(sql: string, allowedPrefixes: string[]): string {
@@ -36,7 +37,7 @@ export async function checkConnection(): Promise<void> {
     await pool.connect();
     await pool.request().query("SELECT 1");
   } catch (e) {
-    throw new Error(`MSSQL: ${e instanceof Error ? e.message : String(e)}`);
+    throw new Error(formatConnectionError("MSSQL", e));
   } finally {
     await pool.close();
   }
